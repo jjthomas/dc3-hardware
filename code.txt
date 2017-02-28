@@ -6,8 +6,8 @@ lens[0] = len
 strs[0] = str
 level := 0
 cur := strs[level]
-tups := vec[((int,int,int), int)](N) // maximum size N
 while (len > 1) {
+  tups := vec[((int,int,int), int)](N) // virtual storage, hopefully not necessary, maximum size N
   pos := 0
   cnt := 0
   while (pos + 1 < len) {
