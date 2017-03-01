@@ -29,7 +29,7 @@ side := 0  // side of double buffer
 fs[side][0] = cur[0] // we know cur must have length 1 at this point
 cur2 := fs[side] 
 level2 := level
-// STEP 2: recurse back up, merging sorted suffixes into the recursion level above
+// STEP 2: recurse back up, merging sorted suffixes (cur2) into the recursion level above (strs[level2 - 1])
 while (level2 > 0) {
   tups = vec[((tri-state,int,int,int,int,int), int)](N) // virtual storage, hopefully not necessary, maximum size N
   pos := 0
@@ -43,7 +43,7 @@ while (level2 > 0) {
   sorted := sort(tups, 0, curLen, cmp = [custom triplet comparator on t.0])
   sortedWithIdx := mapWithIndex(sorted, (t, i) => (t.1, i))
   ordered := sort(sortedWithIdx, 0, cnt, key = t.0)
-  fs[side] = flatMapWithIndex(ordered, (t, i) => if (i % 2 == 1) [t.1, '$'] else [t.1]) // so that cur2 and strs[level2 - 1] above are the same length
+  fs[side] = flatMapWithIndex(ordered, (t, i) => if (i % 2 == 1) [t.1, '$'] else [t.1]) // so that cur2 and strs[level2 - 1] in the while loop above are the same length
   cur2 = fs[side]
   side = ~side 
   level2 -= 1
