@@ -1,8 +1,6 @@
 (str: vec[int]) => // of known size N, we also know recursion depth R; size of int type should be log N (with an extra bit for '$' char)
 len := len(str)
 strs := vec[vec[int]](R) // maximum size R, we can also precisely size the inner vectors based on size at each recursion level
-lens := vec[int](R) // len of corresponding str
-lens[0] = len
 strs[0] = str
 level := 0
 cur := strs[level]
@@ -22,30 +20,28 @@ while (len > 1) {
   strs[level + 1] = map(ordered, t => t.1)
   len = cnt 
   level += 1
-  lens[level] = len
   cur = strs[level]
 }
 
 fs := vec[vec[int](N)](2) // double buffered (necessary?)
 side := 0  // side of double buffer
-cur2 := cur
+fs[side][0] = cur[0] // we know cur must have length 1 at this point
+cur2 := fs[side] 
 level2 := level
 while (level2 > 0) {
-  tups2 = vec[((tri,int,int,int,int,int), int)](N) // virtual storage, hopefully not necessary, maximum size N
-  pos1 := 0
-  pos2 := 0
-  curLen := lens[level2 - 1]
-  while (pos1 < curLen) {
-    tups2[pos1] = ((0, strs[level2 - 1][pos1], strs[level2 - 1][pos1 + 1], strs[level2 - 1][pos1 + 2], cur2[pos2], cur2[pos2 + 1]), pos1) // out of bounds accesses replaced with '$'
-    tups2[pos1 + 1] = ((1, strs[level2 - 1][pos1 + 1], strs[level2 - 1][pos1 + 2], strs[level2 - 1][pos1 + 3], cur2[pos2], cur2[pos2 + 1]), pos1 + 1) // out of bounds accesses replaced with '$'
-    tups2[pos1 + 2] = ((2, strs[level2 - 1][pos1 + 2], strs[level2 - 1][pos1 + 3], strs[level2 - 1][pos1 + 4], cur2[pos2 + 1], cur2[pos2 + 2]), pos1 + 2) // out of bounds accesses replaced with '$'
-    pos1 += 3
-    pos2 += 2
+  tups = vec[((tri-state,int,int,int,int,int), int)](N) // virtual storage, hopefully not necessary, maximum size N
+  pos := 0
+  curLen := len(strs[level2 - 1])
+  while (pos < curLen) {
+    tups[pos] = ((0, strs[level2 - 1][pos], strs[level2 - 1][pos + 1], strs[level2 - 1][pos + 2], cur2[pos], cur2[pos + 1]), pos) // out of bounds accesses replaced with '$'
+    tups[pos + 1] = ((1, strs[level2 - 1][pos + 1], strs[level2 - 1][pos + 2], strs[level2 - 1][pos + 3], cur2[pos], cur2[pos + 1]), pos + 1) // out of bounds accesses replaced with '$'
+    tups[pos + 2] = ((2, strs[level2 - 1][pos + 2], strs[level2 - 1][pos + 3], strs[level2 - 1][pos + 4], cur2[pos + 1], cur2[pos + 2]), pos + 2) // out of bounds accesses replaced with '$'
+    pos += 3
   }
-  sorted := sort(tups2, 0, curLen, cmp = [custom triplet sort on t.0])
+  sorted := sort(tups, 0, curLen, cmp = [custom triplet sort on t.0])
   sortedWithIdx := mapWithIndex(sorted, (t, i) => (t.1, i))
   ordered := sort(sortedWithIdx, 0, cnt, key = t.0)
-  fs[side] = map(ordered, t => t.1)  
+  fs[side] = flatMapWithIndex(ordered, (t, i) => if (i % 2 == 1) [t.1, '$'] else [t.1])  
   cur2 = fs[side]
   side = ~side 
   level2 -= 1
