@@ -4,7 +4,7 @@ strs := vec[vec[int]](R) // maximum size R, we can also precisely size the inner
 strs[0] = str
 level := 0
 cur := strs[level]
-// STEP 1: recurse down and generate alphabets for each recursion level
+// STEP 1: recurse down and generate alphabets for each recursion level (strs)
 while (len > 1) {
   tups := vec[((int,int,int), int)](N) // virtual storage, hopefully not necessary, maximum size N
   pos := 0
