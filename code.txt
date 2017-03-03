@@ -9,6 +9,7 @@ while (len > 1) {
   tups := vec[((int,int,int), int)](N) // virtual storage, hopefully not necessary, maximum size N
   pos := 0
   cnt := 0
+  // like a windowedFlatMapWithIndex over cur with window size 3
   while (pos + 1 < len) {
     tups[cnt] = ((cur[pos + 1], cur[pos + 2], cur[pos + 3]), pos + 1) // out of bounds accesses replaced with '$'
     tups[cnt + 1] = ((cur[pos + 2], cur[pos + 3], cur[pos + 4]), pos + 2) // out of bounds accesses replaced with '$'
@@ -34,6 +35,7 @@ while (level2 > 0) {
   tups = vec[((tri-state,int,int,int,int,int), int)](N) // virtual storage, hopefully not necessary, maximum size N
   pos := 0
   curLen := len(strs[level2 - 1])
+  // like a windowedMapWithIndex over zip(cur2, strs[level2 - 1]) with window size 3
   while (pos < curLen) {
     tups[pos] = ((0, strs[level2 - 1][pos], strs[level2 - 1][pos + 1], strs[level2 - 1][pos + 2], cur2[pos], cur2[pos + 1]), pos) // out of bounds accesses replaced with '$'
     tups[pos + 1] = ((1, strs[level2 - 1][pos + 1], strs[level2 - 1][pos + 2], strs[level2 - 1][pos + 3], cur2[pos], cur2[pos + 1]), pos + 1) // out of bounds accesses replaced with '$'
