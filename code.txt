@@ -12,6 +12,7 @@ while (len > 1) {
   // like a windowedFlatMapWithIndex over cur with window size 3
   while (pos + 1 < len) {
     tups[cnt] = ((cur[pos + 1], cur[pos + 2], cur[pos + 3]), pos + 1) // out of bounds accesses replaced with '$'
+    // TODO pos + 2 for the second item of the tuple is wrong! Needs to come after everything that is 1 mod 3!
     tups[cnt + 1] = ((cur[pos + 2], cur[pos + 3], cur[pos + 4]), pos + 2) // out of bounds accesses replaced with '$'
     pos += 3
     cnt += if (pos + 2 == len) 1 else 2
